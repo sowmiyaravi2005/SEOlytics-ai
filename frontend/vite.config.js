@@ -8,6 +8,9 @@ export default defineConfig({
   build: {
     chunkSizeWarningLimit: 750
   },
+  preview: {
+    allowedHosts: ['seolytics-ai.onrender.com']
+  },
   server: {
     port: 5173,
     proxy: {
