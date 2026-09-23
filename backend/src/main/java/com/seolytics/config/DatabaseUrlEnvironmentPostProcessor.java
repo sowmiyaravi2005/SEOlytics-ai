@@ -1,9 +1,6 @@
 package com.seolytics.config;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -31,12 +28,6 @@ public class DatabaseUrlEnvironmentPostProcessor implements EnvironmentPostProce
 
         Map<String, Object> properties = new LinkedHashMap<>();
         properties.put("spring.datasource.url", normalized.jdbcUrl());
-        if (StringUtils.hasText(normalized.username())) {
-            properties.put("spring.datasource.username", normalized.username());
-        }
-        if (StringUtils.hasText(normalized.password())) {
-            properties.put("spring.datasource.password", normalized.password());
-        }
 
         environment.getPropertySources().addFirst(new MapPropertySource(PROPERTY_SOURCE_NAME, properties));
     }
@@ -63,28 +54,12 @@ public class DatabaseUrlEnvironmentPostProcessor implements EnvironmentPostProce
             jdbcUrl.append('?').append(uri.getRawQuery());
         }
 
-        String username = null;
-        String password = null;
-        if (StringUtils.hasText(uri.getRawUserInfo())) {
-            String[] userInfo = uri.getRawUserInfo().split(":", 2);
-            username = decode(userInfo[0]);
-            if (userInfo.length > 1) {
-                password = decode(userInfo[1]);
-            }
-        }
-
-        return new NormalizedDatabaseUrl(jdbcUrl.toString(), username, password);
+        return new NormalizedDatabaseUrl(jdbcUrl.toString());
     }
 
     private static String jdbcScheme(String scheme) {
-        if ("postgres".equalsIgnoreCase(scheme) || "postgresql".equalsIgnoreCase(scheme)) {
-            return "postgresql";
-        }
         if ("mysql".equalsIgnoreCase(scheme)) {
             return "mysql";
-        }
-        if ("mariadb".equalsIgnoreCase(scheme)) {
-            return "mariadb";
         }
         return null;
     }
@@ -93,14 +68,6 @@ public class DatabaseUrlEnvironmentPostProcessor implements EnvironmentPostProce
         return StringUtils.hasText(first) ? first : second;
     }
 
-    private static String decode(String value) {
-        try {
-            return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
-        } catch (UnsupportedEncodingException ex) {
-            throw new IllegalStateException("UTF-8 is not supported", ex);
-        }
-    }
-
-    private record NormalizedDatabaseUrl(String jdbcUrl, String username, String password) {
+    private record NormalizedDatabaseUrl(String jdbcUrl) {
     }
 }
