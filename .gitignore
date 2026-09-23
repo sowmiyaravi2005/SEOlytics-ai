@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+frontend/node_modules/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+
+# Java / Maven build output
+target/
+backend/target/
+*.class
+
+# Frontend build/cache output
+dist/
+frontend/dist/
+.vite/
+frontend/.vite/
+
+# Local runtime data
+backend/data/
+*.mv.db
+*.lock.db
+chromedriver*
+
+# Logs
+*.log
+logs/
+
+# IDE and system files
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+.DS_Store
+Thumbs.db
+desktop.ini

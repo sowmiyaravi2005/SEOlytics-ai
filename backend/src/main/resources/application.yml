@@ -1,0 +1,52 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: seolytics
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/seolytics?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:seolytics}
+    password: ${DB_PASSWORD:seolytics}
+  sql:
+    init:
+      mode: never
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: UTC
+    open-in-view: false
+
+seolytics:
+  jwt:
+    secret: ${JWT_SECRET:change-this-to-a-long-random-secret-key-at-least-32-chars}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+  crawler:
+    max-pages-default: 30
+    max-pages-cap: 80
+    max-depth-default: 3
+    max-depth-cap: 5
+    request-timeout-ms: 12000
+    delay-ms: 450
+    max-link-checks-per-page: 12
+    max-html-bytes: 1500000
+    max-redirect-hops: 5
+    user-agent: "SEOlyticsBot/1.0 (+https://seolytics.local; technical-seo-auditor)"
+    use-selenium: ${SEOLYTICS_USE_SELENIUM:false}
+  scoring:
+    critical-base: 8
+    high-base: 5
+    medium-base: 2
+    low-base: 1
+    extra-occurrence: 0.35
+    extra-occurrence-cap: 8
+
+logging:
+  level:
+    com.seolytics: INFO
+    org.hibernate.SQL: WARN
