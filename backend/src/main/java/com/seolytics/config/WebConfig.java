@@ -7,10 +7,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    private final SeolyticsProperties properties;
+
+    public WebConfig(SeolyticsProperties properties) {
+        this.properties = properties;
+    }
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+        String[] allowedOrigins = properties.getCors().getAllowedOrigins().split("\\s*,\\s*");
         registry.addMapping("/api/**")
-                .allowedOriginPatterns("http://localhost:*", "http://127.0.0.1:*")
+                .allowedOriginPatterns(allowedOrigins)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);

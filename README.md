@@ -43,13 +43,18 @@ Copy `.env.example` and export variables for the backend process (or set them in
 
 - `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`
 - `JWT_SECRET` (32+ characters in production)
+- `CORS_ALLOWED_ORIGINS` for production frontend origins, for example `https://seolytics-ai.onrender.com`
+
+For the hosted Vite frontend, set:
+
+- `VITE_API_URL` to the deployed backend HTTPS URL, for example `https://seolytics-api.onrender.com`
 
 ## Run backend
 
 ```bash
 cd backend
 mvn test
-mvn spring-boot:run
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
 For local Maven runs, the backend uses the `dev` profile with an H2 database and starts on `http://localhost:8081`.
@@ -65,6 +70,31 @@ npm run dev
 ```
 
 UI: `http://localhost:5173` (proxies `/api` to the backend).
+
+## Render deployment
+
+The backend deploys as a separate Render Web Service from `backend/Dockerfile`. The Docker build runs:
+
+```bash
+mvn clean package -DskipTests
+```
+
+The container starts the Spring Boot jar with:
+
+```bash
+java -jar app.jar
+```
+
+Render must provide these backend environment variables:
+
+- `DB_URL` or `DATABASE_URL` as a JDBC MySQL URL
+- `DB_USERNAME` or `DATABASE_USERNAME`
+- `DB_PASSWORD` or `DATABASE_PASSWORD`
+- `JWT_SECRET`
+- `CORS_ALLOWED_ORIGINS=https://seolytics-ai.onrender.com`
+- `SEOLYTICS_USE_SELENIUM=false`
+
+The backend reads Render's `PORT` automatically and binds to `0.0.0.0`.
 
 ## Demo workflow
 

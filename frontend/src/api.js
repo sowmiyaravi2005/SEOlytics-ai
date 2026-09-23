@@ -1,5 +1,6 @@
 const TOKEN_KEY = 'seolytics.token';
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+const API_BASE_URL = (import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+const API_UNAVAILABLE_MESSAGE = 'SEOlytics is temporarily unable to reach the API. Please try again in a moment.';
 
 export function getToken() {
   return localStorage.getItem(TOKEN_KEY);
@@ -22,7 +23,7 @@ async function request(path, options = {}) {
   try {
     response = await fetch(url, { ...options, headers });
   } catch (err) {
-    throw new Error('Unable to reach the SEOlytics API. Start the backend with mvn spring-boot:run, then try again.');
+    throw new Error(API_UNAVAILABLE_MESSAGE);
   }
   if (response.status === 401) {
     setToken(null);
@@ -38,7 +39,7 @@ export async function apiJson(path, options = {}) {
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
     if (response.status === 502 || response.status === 503 || response.status === 504) {
-      throw new Error('SEOlytics API is not running. Start the backend with mvn spring-boot:run, then try again.');
+      throw new Error(API_UNAVAILABLE_MESSAGE);
     }
     throw new Error(data.message || `Request failed (${response.status})`);
   }

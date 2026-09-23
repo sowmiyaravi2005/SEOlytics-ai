@@ -5,9 +5,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "seolytics")
 public class SeolyticsProperties {
 
+    private final Cors cors = new Cors();
     private final Jwt jwt = new Jwt();
     private final Crawler crawler = new Crawler();
     private final Scoring scoring = new Scoring();
+
+    public Cors getCors() {
+        return cors;
+    }
 
     public Jwt getJwt() {
         return jwt;
@@ -19,6 +24,18 @@ public class SeolyticsProperties {
 
     public Scoring getScoring() {
         return scoring;
+    }
+
+    public static class Cors {
+        private String allowedOrigins = "https://seolytics-ai.onrender.com,http://localhost:5173,http://127.0.0.1:5173";
+
+        public String getAllowedOrigins() {
+            return allowedOrigins;
+        }
+
+        public void setAllowedOrigins(String allowedOrigins) {
+            this.allowedOrigins = allowedOrigins;
+        }
     }
 
     public static class Jwt {
