@@ -87,14 +87,15 @@ java -jar app.jar
 
 Render must provide these backend environment variables:
 
-- `DB_URL` or `DATABASE_URL` as a JDBC MySQL URL
-- `DB_USERNAME` or `DATABASE_USERNAME`
-- `DB_PASSWORD` or `DATABASE_PASSWORD`
+- `SPRING_DATASOURCE_URL` as a JDBC URL (recommended), such as `jdbc:mysql://HOST:3306/seolytics` or `jdbc:postgresql://HOST:5432/seolytics`
+- `SPRING_DATASOURCE_USERNAME` and `SPRING_DATASOURCE_PASSWORD` when they are not embedded in the connection URL
 - `JWT_SECRET`
 - `CORS_ALLOWED_ORIGINS=https://seolytics-ai.onrender.com`
 - `SEOLYTICS_USE_SELENIUM=false`
 
 The backend reads Render's `PORT` automatically and binds to `0.0.0.0`.
+
+For a Render Postgres database, its connection string is commonly `postgresql://USER:PASSWORD@HOST:5432/DATABASE`. This application accepts that value in `DATABASE_URL` or `DB_URL` and converts it to the required JDBC form at startup. Set `SPRING_DATASOURCE_URL` directly only when it already begins with `jdbc:`. Use the database's internal URL for a Render service in the same region.
 
 ## Demo workflow
 
