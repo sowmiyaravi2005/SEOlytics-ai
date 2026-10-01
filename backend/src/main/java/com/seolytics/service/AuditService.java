@@ -111,7 +111,11 @@ public class AuditService {
                 .filter(page -> status == null || Objects.equals(page.getStatusCode(), status))
                 .map(this::toPage)
                 .toList();
-        List<AuditDtos.IssueDto> issues = seoIssueRepository.search(session, severity, type, blankToNull(query)).stream()
+        String normalizedQuery = blankToNull(query);
+        List<AuditDtos.IssueDto> issues = seoIssueRepository.findBySessionOrderBySeverityAscIdAsc(session).stream()
+                .filter(issue -> severity == null || issue.getSeverity() == severity)
+                .filter(issue -> type == null || issue.getIssueType() == type)
+                .filter(issue -> matchesQuery(issue, normalizedQuery))
                 .filter(issue -> status == null || issue.getPage() == null || Objects.equals(issue.getPage().getStatusCode(), status))
                 .map(this::toIssue)
                 .toList();
@@ -308,5 +312,17 @@ public class AuditService {
 
     private String blankToNull(String value) {
         return value == null || value.isBlank() ? null : value.strip();
+    }
+
+    private boolean matchesQuery(SeoIssue issue, String query) {
+        if (query == null) {
+            return true;
+        }
+        String needle = query.toLowerCase(Locale.ROOT);
+        return containsIgnoreCase(issue.getPageUrl(), needle) || containsIgnoreCase(issue.getTitle(), needle);
+    }
+
+    private boolean containsIgnoreCase(String value, String lowercaseNeedle) {
+        return value != null && value.toLowerCase(Locale.ROOT).contains(lowercaseNeedle);
     }
 }

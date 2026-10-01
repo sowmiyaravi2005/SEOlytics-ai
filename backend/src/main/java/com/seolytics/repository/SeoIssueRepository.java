@@ -25,20 +25,6 @@ public interface SeoIssueRepository extends JpaRepository<SeoIssue, Long> {
     void deleteBySession(CrawlSession session);
 
     @Query("""
-            select i from SeoIssue i left join fetch i.page
-            where i.session = :session
-              and (:severity is null or i.severity = :severity)
-              and (:type is null or i.issueType = :type)
-              and (:query is null or lower(i.pageUrl) like lower(concat('%', :query, '%'))
-                   or lower(i.title) like lower(concat('%', :query, '%')))
-            order by i.severity asc, i.id asc
-            """)
-    List<SeoIssue> search(@Param("session") CrawlSession session,
-                          @Param("severity") IssueSeverity severity,
-                          @Param("type") IssueType type,
-                          @Param("query") String query);
-
-    @Query("""
             select i.issueType, count(i)
             from SeoIssue i
             where i.session.owner = :owner
